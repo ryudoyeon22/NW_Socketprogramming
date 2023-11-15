@@ -62,7 +62,7 @@ public class Server {
                     //System.out.println(inputMessage); 
 
                     String res = calc(inputMessage); // res = calc's result
-                    out.write(res + "\n"); // 계산 결과 문자열 전송 
+                    out.write(res + "\n"); 
                     out.flush();
                 }
             } catch (IOException e) {
@@ -85,11 +85,14 @@ public class Server {
         	BasicCalculator calculator = new BasicCalculator();
         	
             StringTokenizer st = new StringTokenizer(exp, " ");
-            if (st.countTokens() > 3)
-                return "Incorrect: Too many arguments";
-            else if (st.countTokens() < 3)
-                return "Incorrect: Too little arguments";
-
+            if (st.countTokens() > 3) {
+            	System.out.println("Incorrect: Too many arguments");
+                return "Error message: Too many arguments";
+            }
+            else if (st.countTokens() < 3) {
+            	System.out.println("Incorrect: Too little arguments");
+                return "Error message: Too little arguments";
+            }
             String res = "";
             String opcode = st.nextToken();
             int op1 = Integer.parseInt(st.nextToken());
@@ -108,11 +111,19 @@ public class Server {
                     System.out.println(op1 + " * " + op2 + " = " + res);
                     break;
                 case "DIV":
+                	if (op2 != 0) {
                         res = Integer.toString(calculator.DIV(op1, op2));
+                        System.out.println(op1 + " / " + op2 + " = " + res);                		
+                	}
+                	else {
+                		res = "Error message: Divided by zero";
+                		System.out.println("Incorrect: divided by zero");
+                	}
 
                     break;
                 default:
-                    res = "Incorrect: Invalid message";
+                    res = "Error message: Invalid message";
+                    System.out.println("Incorrect: Invalid message");
             }
             return res;
         }

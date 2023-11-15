@@ -43,18 +43,19 @@ public class Client {
                 // Receive results from the server and output
                 String receivedMessage = reader.readLine();
                 System.out.println("Answer: " + receivedMessage);
+                
 
             } catch (IOException e) {
-                System.out.println("Incorret: " + e.getMessage());
+                System.out.println("Error message: " + e.getMessage());
             }
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error message: " + e.getMessage());
         } finally {
             if (socket != null) {
                 try {
                     socket.close(); // close socket
                 } catch (IOException e) {
-                    System.out.println("Error: " + e.getMessage());
+                    System.out.println("Error message: " + e.getMessage());
                 }
             }
         }
