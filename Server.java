@@ -1,3 +1,4 @@
+// Server.java
 package socketHW1;
 
 import java.io.BufferedReader;
@@ -10,15 +11,15 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 
 public class Server {
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         ServerSocket listener = null;
         try {
             listener = new ServerSocket(1234); // 서버 소켓 생성
-            System.out.println("연결을 기다리고 있습니다.....");
+            System.out.println("Waiting for connection...");
 
             while (true) {
                 Socket socket = listener.accept(); // 클라이언트로부터 연결 요청 대기
-                System.out.println("연결되었습니다.");
+                System.out.println("Connected");
 
                 Runnable clientHandler = new ClientHandler(socket);
                 Thread thread = new Thread(clientHandler);
@@ -31,17 +32,18 @@ public class Server {
                 if (listener != null)
                     listener.close(); // 서버 소켓 닫기
             } catch (IOException e) {
-                System.out.println("서버 소켓 닫는 중 오류가 발생했습니다.");
+                System.out.println("Error closing server socket.");
             }
         }
     }
 
-    static class ClientHandler implements Runnable{
+    static class ClientHandler implements Runnable {
         private final Socket socket;
 
         public ClientHandler(Socket socket) {
             this.socket = socket;
         }
+
         @Override
         public void run() {
             BufferedReader in = null;
@@ -54,7 +56,7 @@ public class Server {
                 while (true) {
                     String inputMessage = in.readLine();
                     if (inputMessage == null || inputMessage.equalsIgnoreCase("bye")) {
-                        System.out.println("클라이언트에서 연결을 종료하였음");
+                        System.out.println("Client terminated the connection");
                         break; // "bye"를 받거나 연결이 끊기면 종료
                     }
                     System.out.println(inputMessage); // 받은 메시지를 화면에 출력
@@ -64,7 +66,7 @@ public class Server {
                     out.flush();
                 }
             } catch (IOException e) {
-                System.out.println("클라이언트와의 통신 중 오류가 발생했습니다.");
+                System.out.println("An error occurred while communicating with the client.");
             } finally {
                 try {
                     if (out != null)
@@ -74,12 +76,14 @@ public class Server {
                     if (socket != null)
                         socket.close(); // 통신용 소켓 닫기
                 } catch (IOException e) {
-                    System.out.println("클라이언트와의 통신 소켓 닫기 중 오류가 발생했습니다.");
+                    System.out.println("Error closing communication socket with client.");
                 }
             }
         }
 
         public static String calc(String exp) {
+        	BasicCalculator calculator = new BasicCalculator();
+        	
             StringTokenizer st = new StringTokenizer(exp, " ");
             if (st.countTokens() > 3)
                 return "Incorrect: Too many arguments";
@@ -92,17 +96,17 @@ public class Server {
             int op2 = Integer.parseInt(st.nextToken());
             switch (opcode) {
                 case "ADD":
-                    res = Integer.toString(op1 + op2);
+                	res = Integer.toString(calculator.ADD(op1, op2));
                     break;
                 case "SUB":
-                    res = Integer.toString(op1 - op2);
+                    res = Integer.toString(calculator.SUB(op1, op2));
                     break;
                 case "MUL":
-                    res = Integer.toString(op1 * op2);
+                    res = Integer.toString(calculator.MUL(op1, op2));
                     break;
                 case "DIV":
                     if (op2 != 0) {
-                        res = Integer.toString(op1 / op2);
+                        res = Integer.toString(calculator.DIV(op1, op2));
                     } else {
                         return "Incorrect: Divided by zero";
                     }
@@ -114,4 +118,5 @@ public class Server {
         }
     }
 }
+
 
